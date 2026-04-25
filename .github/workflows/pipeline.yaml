@@ -16,7 +16,7 @@ jobs:
       echo "linetr run successfuly"
  train:
   needs: linter
-  if: success() && github.ref == 'refs/heads/main && contains(github.event.head_commit.message , '[runs-train]')
+  if: success() && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message , '[runs-train]')
   runs-on: ubuntu-latest 
   steps:
    - name: checkoutcode
