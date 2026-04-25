@@ -1,44 +1,43 @@
-name: Smart CI Pipeline
-
-on:
-  push:
-
+name: updated 
+on: 
+ push:
 jobs:
-  linter:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Lightweight linter
-        run: echo "Linter passed successfully"
-
-  train:
-    needs: linter
-    if: needs.linter.result == 'success' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[run-train]')
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Run expensive training
-        run: python train.py
-
-      - name: Create error log file on failure
-        if: failure()
-        run: |
-          echo "Training job failed." > error_logs.txt
-          echo "Branch: ${{ github.ref }}" >> error_logs.txt
-          echo "Commit: ${{ github.event.head_commit.message }}" >> error_logs.txt
-
-      - name: Upload error logs artifact
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: error-logs
-          path: error_logs.txt
-
-      - name: Cleanup temporary cloud volumes
-        if: always()
-        run: echo "Cleaning up temporary cloud volumes..."
+ linter:
+  runs-on: ubuntu-latest
+  steps:
+   - name: checkoutcode
+     uses: actions/checkout@v4
+   - name: setup 
+     uses: actions/setup-python@v5
+     with:
+      python-version: "3.10"
+   - name:
+     run: |
+      echo "linetr run successfuly"
+ train:
+  needs: linter
+  if: success() && github.ref == 'refs/heads/main && contains(github.event.head_commit.message , '[runs-train]')
+  runs-on: ubuntu-latest 
+  steps:
+   - name: checkoutcode
+     uses: actions/checkout@v4
+   - name: setup 
+     uses: actions/setup-python@v5
+     with:
+      python-version: "3.10"
+   - name: train heavy 
+     run: python train.py
+   - name: upload logs 
+     if: failure()
+     uses: actions/upload-artifact@v4
+     with:
+      name: error-logs
+      path: error_logs.txt
+   - name: cleaning up 
+     if: always()
+     run: |
+      echo "Cleaning up temporary cloud volumes..."
+     
+   
+   
+  
