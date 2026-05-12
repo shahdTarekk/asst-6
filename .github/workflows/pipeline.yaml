@@ -15,7 +15,8 @@ jobs:
    - name: isntall depdencies
      run: |
       pip isntall flake8
-      flake8 .
+   - name: run flak
+     run: flake8 .
    - name: cehk
      run: echo "check code quality"
  train:
