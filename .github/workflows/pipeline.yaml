@@ -1,45 +1,47 @@
-name: Mock Full CI/CD Pipeline
-
+name:
 on:
-  push:
-    branches: [main]
-
+ push:
+  branches: [main]
 jobs:
-  validate:
-    runs-on: ubuntu-latest
+ linter:
+  runs-on: ubuntu-latest
+  steps:
+   - name: checkout code
+     uses: actions/checkout@v4
+   - name: python setup
+     uses: actions/setup-python@v5
+     with:
+      python-version: "3.10"
+   - name: isntall depdencies
+     run: |
+      pip isntall flake8
+      flake8 .
+   - name: cehk
+     run: echo "check code quality"
+train:
+ needs: linter
+ if: github.ref == 'refs/heads/main' contains(github.event.head_commit.message , '[ runs-on]')concurrency: 
+ runs-on: ubuntu-latest
+ steps:
+  - name: checkout
+    uses: actions/checkout@v4
+  - name: setup
+    uses: actions/setup-python@v5
+    with:
+     python-version: "3.10"
+  - name: train model
+    run: python train.py > train.log
 
-    steps:
-      - name: Mock DVC pull
-        run: |
-          mkdir -p data
-          echo "fake data" > data/data.csv
+  - name: save logs
+    if: failure()
+    uses: action/upload-artifact@v4
+    with:
+     name: train-logs
+     path: train.log
 
-      - name: Mock train and MLflow logging
-        env:
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-        run: |
-          echo "mock-run-id-123" > model_info.txt
-
-      - name: Upload model info artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: model-info
-          path: model_info.txt
-
-  deploy:
-    needs: validate
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download model info artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: model-info
-
-      - name: Mock threshold check
-        env:
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-        run: cat model_info.txt
-
-      - name: Mock Docker build
-        run: docker --version
+  - name: evaluate
+    if: sucsess()
+    run: echo " evaluate automatically"
+  - name: clean
+    if: always()
+    run: echo "cleaninh"
