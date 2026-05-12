@@ -20,7 +20,7 @@ jobs:
      run: echo "check code quality"
 train:
  needs: linter
- if: github.ref == 'refs/heads/main' contains(github.event.head_commit.message , '[ runs-on]')concurrency: 
+ if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message , '[ runs-on]') 
  runs-on: ubuntu-latest
  steps:
   - name: checkout
