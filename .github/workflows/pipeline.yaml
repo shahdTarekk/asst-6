@@ -40,7 +40,7 @@ jobs:
      path: train.log
 
   - name: evaluate
-    if: sucsess()
+    if: success()
     run: echo " evaluate automatically"
   - name: clean
     if: always()
