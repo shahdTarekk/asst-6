@@ -18,8 +18,7 @@ jobs:
      - name: run flake8
        run: flake8 .
      - name: check run
-       run: |
-        echo "flake8 run successfully"
+       run: echo "flake8 run successfully"
 
   train:
    needs: linter
